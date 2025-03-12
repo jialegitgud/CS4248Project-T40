@@ -1,0 +1,4 @@
+keras==3.8.0
+Keras-Preprocessing==1.1.2
+tensorflow==2.18.0
+numpy==1.26.4
