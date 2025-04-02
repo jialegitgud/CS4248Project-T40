@@ -7,7 +7,7 @@ from keras_preprocessing.sequence import pad_sequences
 from sklearn.metrics import classification_report, confusion_matrix
 
 from LSTM import BinaryLSTMModel
-from BERT import DistillBERT
+from GRU import BinaryGRUModel
 
 # Read data from JSON
 def read_data(path, title_key='headline', label_key='is_sarcastic'):
@@ -30,7 +30,7 @@ def preprocess_text(text):
     return text
 
 def main():
-    model = DistillBERT()
+    model = BinaryGRUModel()
 
     # Prepare data
     X_train, y_train, X_test, y_test = read_data("./Sarcasm_Headlines_Dataset.json")
@@ -38,22 +38,18 @@ def main():
     X_test = [preprocess_text(text) for text in X_test]
 
     # For LSTM prep
-    # tokenizer = Tokenizer(num_words=10000)
-    # tokenizer.fit_on_texts(X_train)
-    # sequences = tokenizer.texts_to_sequences(X_train)
-    # test_sequences = tokenizer.texts_to_sequences(X_test)
-    # input_sequences = pad_sequences(sequences, maxlen=50, padding="post")
-    # test_sequences = pad_sequences(test_sequences, maxlen=50, padding="post")
-    
-    # For BERT models
-    input_sequences = X_train
-    test_sequences = X_test
+    tokenizer = Tokenizer(num_words=10000)
+    tokenizer.fit_on_texts(X_train)
+    sequences = tokenizer.texts_to_sequences(X_train)
+    test_sequences = tokenizer.texts_to_sequences(X_test)
+    input_sequences = pad_sequences(sequences, maxlen=50, padding="post")
+    test_sequences = pad_sequences(test_sequences, maxlen=50, padding="post")
     
     # Prep labels
     labels = np.array(y_train)
 
     # Train Model
-    # model.fit(input_sequences, labels)
+    model.fit(input_sequences, labels)
 
     # Attempt predictions
     score = 0
