@@ -8,14 +8,14 @@ def step(prob):
 
 # LSTM model for sarcasm detection
 class BinaryLSTMModel:
-    def __init__(self, vocab_size=10000, output_dim=128, embedding_matrix=None):
+    def __init__(self, vocab_size=10000, output_dim=64, embedding_matrix=None):
         nn = Sequential(
             [
                 layers.Embedding(input_dim=vocab_size, output_dim=output_dim, weights=[embedding_matrix], trainable=False) if embedding_matrix is not None else layers.Embedding(input_dim=vocab_size, output_dim=output_dim),
-                layers.Bidirectional(layers.LSTM(64, return_sequences=True)),
+                layers.Bidirectional(layers.LSTM(64, recurrent_dropout=0.1, return_sequences=True)),
                 layers.Bidirectional(layers.LSTM(32)),
                 layers.Dropout(0.2),
-                layers.Dense(16, activation='relu'),
+                layers.Dense(32, activation='relu'),
                 layers.Dense(1, activation='sigmoid')
             ]
         )

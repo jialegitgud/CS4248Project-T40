@@ -8,7 +8,7 @@ def step(prob):
 
 # LSTM model for sarcasm detection
 class BinaryGRUModel:
-    def __init__(self, vocab_size=10000, output_dim=128, embedding_matrix=None):
+    def __init__(self, vocab_size=15000, output_dim=128, embedding_matrix=None):
         nn = Sequential(
             [
                 layers.Embedding(input_dim=vocab_size, output_dim=output_dim, weights=[embedding_matrix], trainable=False) if embedding_matrix is not None else layers.Embedding(input_dim=vocab_size, output_dim=output_dim, embeddings_regularizer="l2"),
