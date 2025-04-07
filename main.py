@@ -63,13 +63,19 @@ def read_data(path, title_key='headline', label_key='is_sarcastic'):
             headlines.append(entry[title_key])
             labels.append(entry[label_key])
 
-    return headlines[100:], labels[100:], headlines[:100], labels[:100]
+    return headlines[200:], labels[200:], headlines[:200], labels[:200]
 
 def main():
     model = BinaryLSTMModel()
 
     # Prepare data
     X_train, y_train, X_test, y_test = read_data("./Sarcasm_Headlines_Dataset.json")
+    X_train2, y_train2, X_test2, y_test2 = read_data("./Sarcasm_Headlines_Dataset_v2.json")
+    X_train.extend(X_train2)
+    y_train.extend(y_train2)
+    X_test.extend(X_test2)
+    y_test.extend(y_test2)
+    print(f"Starting with {len(X_train)} train data and {len(X_test)} test data...")
 
     # For control outside of default tokenizer preprocessing
     # X_train = [preprocess_text(text, True) for text in X_train]
