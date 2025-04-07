@@ -66,7 +66,7 @@ def read_data(path, title_key='headline', label_key='is_sarcastic'):
     return headlines[200:], labels[200:], headlines[:200], labels[:200]
 
 def main():
-    model = BinaryLSTMModel()
+    model = BinaryLSTMModel(load=False)
 
     # Prepare data
     X_train, y_train, X_test, y_test = read_data("./Sarcasm_Headlines_Dataset.json")
@@ -88,6 +88,17 @@ def main():
     test_sequences = tokenizer.texts_to_sequences(X_test)
     input_sequences = pad_sequences(sequences, maxlen=128, padding="post")
     test_sequences = pad_sequences(test_sequences, maxlen=128, padding="post")
+
+    # New unseen sequences
+    sarcastic_sequences = []
+    with open("sample_sarcastic_headlines.txt") as f:
+        for line in f.readlines():
+            if line.startswith("#"): # Ignore the source list
+                continue
+            else:
+                sarcastic_sequences.append(line)
+    sarcastic_sequences = tokenizer.texts_to_sequences(sarcastic_sequences)
+    sarcastic_sequences = pad_sequences(sarcastic_sequences, maxlen=128, padding="post")
     
     # Prep labels
     labels = np.array(y_train)
@@ -103,6 +114,9 @@ def main():
         if pred_labels[i] == y_test[i]:
             score += 1
     print("Percentage of correct predictions: ", score/len(pred_labels))
+
+    unseen_predictions = model.predict(sarcastic_sequences)
+    print("Predictions on unseen data: ", unseen_predictions)
 
     # Evaluate model
     print(confusion_matrix(y_test, pred_labels))
