@@ -7,7 +7,7 @@ import os
 import torch
 
 # read the CSV file into a pandas DataFrame
-df = pd.read_csv("sarcasm_removal_dataset.csv")
+df = pd.read_csv("./data/train_clean_processed.csv")
 
 # Convert to HuggingFace dataset
 dataset = Dataset.from_pandas(df)
