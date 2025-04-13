@@ -93,7 +93,7 @@ def main():
     sarcastic_sequences = []
     with open("./data/sample_sarcastic_headlines.txt") as f:
         for line in f.readlines():
-            if line.startswith("#"): # Ignore the source list
+            if line.startswith("#"): # Ignore the source list and comments
                 continue
             else:
                 sarcastic_sequences.append(line)
