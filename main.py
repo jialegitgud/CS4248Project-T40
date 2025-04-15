@@ -10,6 +10,8 @@ from sklearn.metrics import classification_report, confusion_matrix
 
 from LSTM import BinaryLSTMModel
 from GRU import BinaryGRUModel
+from dense import BinaryDenseModel
+from Mini_LSTM import MiniBinaryLSTMModel
 
 # Preprocess text (custom behaviour)
 def preprocess_text(text, clean=False):
@@ -66,7 +68,9 @@ def read_data(path, title_key='headline', label_key='is_sarcastic'):
     return headlines[200:], labels[200:], headlines[:200], labels[:200]
 
 def main():
-    model = BinaryLSTMModel(load=False)
+    # model = BinaryLSTMModel(load=False)
+    # model = BinaryDenseModel(load=False)
+    model = MiniBinaryLSTMModel(load=False)
 
     # Prepare data
     X_train, y_train, X_test, y_test = read_data("Sarcasm_Headlines_Dataset.json")
@@ -91,12 +95,14 @@ def main():
 
     # New unseen sequences
     sarcastic_sequences = []
-    with open("./data/sample_sarcastic_headlines.txt") as f:
+    with open("data/larger_test.txt") as f:
         for line in f.readlines():
             if line.startswith("#"): # Ignore the source list and comments
                 continue
-            else:
-                sarcastic_sequences.append(line)
+            
+            clean_line = line.lstrip("0123456789. ").strip()
+            if clean_line:
+                sarcastic_sequences.append(clean_line)
     sarcastic_sequences = tokenizer.texts_to_sequences(sarcastic_sequences)
     sarcastic_sequences = pad_sequences(sarcastic_sequences, maxlen=128, padding="post")
     
@@ -115,11 +121,14 @@ def main():
             score += 1
     print("Percentage of correct predictions: ", score/len(pred_labels))
 
-    unseen_predictions = model.predict(sarcastic_sequences)
-    print("Predictions on unseen data: ", unseen_predictions)
-
     # Evaluate model
     print(confusion_matrix(y_test, pred_labels))
     print(classification_report(y_test, pred_labels))
+
+    unseen_predictions = model.predict(sarcastic_sequences)
+    unseen_true_labels = [1] * 50 + [0] * 50
+    print("Predictions on unseen data: ", unseen_predictions)
+    print(confusion_matrix(unseen_true_labels, unseen_predictions))
+    print(classification_report(unseen_true_labels, unseen_predictions))
 
 main()
